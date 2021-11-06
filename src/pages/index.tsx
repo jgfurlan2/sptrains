@@ -1,58 +1,47 @@
-import { NextPage } from 'next';
-import Head from 'next/head';
-import { useRouter } from 'next/router';
-import React from 'react';
-import { FaCog, FaPen, FaTimes } from 'react-icons/fa';
-import ReactLoading from 'react-loading';
+import React, { useState } from 'react'
+import ReactLoading from 'react-loading'
 
-import { LineStatusCard } from '~/components/LineStatusCard';
+import { NextPage } from 'next'
+import Head from 'next/head'
+import { useTheme } from 'styled-components'
 
-import { useLinesColor, useAPI } from '~/hooks';
-
-import {
-  HomeContainer,
-  LoadingContainer,
-  UserContainer,
-  UserAvatar,
-  UserSettings,
-  UserLogout,
-} from '~/styles/pages/home';
-
-import { IAPIStatusRequest } from '~/interfaces';
+import { LineStatusCard } from '~/components/LineStatusCard'
+import { Modal } from '~/components/Modal'
+import { useAPI } from '~/hooks'
+import { HomeContainer, LoadingContainer } from '~/styles/pages/home'
+import { IAPIStatusRequest, IStatusLine } from '~/types'
+import { lineColors } from '~/utils/lineColors'
 
 const Home: NextPage = () => {
-  const { data } = useAPI<IAPIStatusRequest>('lines/status', { method: 'GET' }, { refreshInterval: 300000 });
-  const colors = useLinesColor();
-  const router = useRouter();
+  const [selectedLine, setSelectedLine] = useState<IStatusLine>()
+  const theme = useTheme()
+  const { data } = useAPI<IAPIStatusRequest>('/status', { method: 'GET' }, { refreshInterval: 300000 })
 
   return (
     <>
       <Head>
         <title>SPTrains</title>
       </Head>
-      <HomeContainer>
-        {
-          (!data || (!data.lines && data.lines.length < 1))
-            ? <LoadingContainer><ReactLoading type="cylon" color="#000000" /></LoadingContainer>
-            : data.lines.map((line) => <LineStatusCard key={line.id} line={line} color={colors.ofLine(line.id)} />)
-        }
-        <UserContainer>
-          <UserAvatar>
-            <img src="https://api.adorable.io/avatars/285/abott@adorable.png" alt="user-avatar" />
-            <div>
-              <FaPen size={20} />
-            </div>
-          </UserAvatar>
-          <UserSettings onClick={() => router.push('/dashboard')}>
-            <FaCog size={20} />
-          </UserSettings>
-          <UserLogout>
-            <FaTimes size={20} />
-          </UserLogout>
-        </UserContainer>
-      </HomeContainer>
-    </>
-  );
-};
 
-export default Home;
+      <HomeContainer>
+        {!data || !data.lines || data.lines.length < 1 ? (
+          <LoadingContainer>
+            <ReactLoading type="cylon" color={theme.colors.text} />
+          </LoadingContainer>
+        ) : (
+          data.lines.map((line) => <LineStatusCard key={line.id} line={line} onDetailsClick={setSelectedLine} />)
+        )}
+      </HomeContainer>
+      <Modal
+        isOpen={!!selectedLine}
+        header={selectedLine?.name}
+        onClose={() => setSelectedLine(undefined)}
+        style={{ border: `2px solid ${lineColors(selectedLine?.id || 1).background}` }}
+      >
+        {selectedLine?.details}
+      </Modal>
+    </>
+  )
+}
+
+export default Home

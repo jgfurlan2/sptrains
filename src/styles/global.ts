@@ -1,4 +1,4 @@
-import { createGlobalStyle } from 'styled-components';
+import { createGlobalStyle } from 'styled-components'
 
 export const GlobalStyle = createGlobalStyle`
   * {
@@ -7,8 +7,15 @@ export const GlobalStyle = createGlobalStyle`
     box-sizing: border-box;
   }
 
+  body {
+    background: ${({ theme }) => theme.colors.background};
+    color: ${({ theme }) => theme.colors.text};
+    overflow: auto;
+  }
+
   html, body, #__next {
     height: 100%;
+    overflow: auto;
   }
 
   *, button, input {
@@ -18,11 +25,6 @@ export const GlobalStyle = createGlobalStyle`
     ::placeholder, ::-ms-input-placeholder, :-ms-input-placeholder {
       font-family: "Roboto", -apple-system, system-ui, sans-serif;
     }
-  }
-
-  body {
-    background: ${({ theme }) => theme.colors.background};
-    color: ${({ theme }) => theme.colors.text};
   }
 
   svg {
@@ -52,4 +54,4 @@ export const GlobalStyle = createGlobalStyle`
       max-width: 1140px;
     }
   }
-`;
+`

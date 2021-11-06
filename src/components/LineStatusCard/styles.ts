@@ -1,59 +1,40 @@
 /* eslint-disable indent */
-import styled from 'styled-components';
+import styled from 'styled-components'
 
 interface ILineStatusCardContainerStyledProps {
-  color: string;
-  text: string;
-  status: string;
+  color: string
+  text: string
 }
 
-export const LineStatusCardContainer = styled.button<ILineStatusCardContainerStyledProps>`
-  :focus { height: 80px; }
-  :not(:focus) { height: 40px; }
+export const LineStatusCardContainer = styled.div<ILineStatusCardContainerStyledProps>`
+  height: var(--card-size);
   width: 100%;
 
   border: none;
-  box-shadow: 0 1px 4px 0 ${({ theme }) => theme.colors.shaddow};
-  background: ${({ theme }) => theme.colors.background};
-  border-radius: 10px;
+  box-shadow: 0 1px 4px 0 ${({ theme }) => theme.colors.shadow};
+  background: ${({ theme }) => theme.colors.primary};
+  border-radius: 20px;
+  overflow: hidden;
 
   display: grid;
-  grid-template-areas: 'I N S' 'D D D';
+  grid-template-areas: 'I N S' 'SD SD SD' 'D D D';
   grid-template-columns: 40px 1fr 40px;
-  grid-template-rows: 40px 1fr;
+  grid-template-rows: 40px 40px 40px;
   align-items: center;
 
-  transition: 250ms ease;
+  transition: height 100ms linear;
   cursor: pointer;
 
-  .extended {
-    grid-area: D;
-    transition: 250ms ease;
-
-    span {
-      font-weight: 800;
-      color: ${({ theme, status }) => {
-      switch(status) {
-        case 'Operação Normal':
-          return theme.colors.success;
-        case 'Paralisada':
-          return theme.colors.danger;
-        case 'Operação Encerrada':
-        case 'Operações Encerradas':
-          return '#A3A3A3';
-        default:
-          return theme.colors.warning;
-        }
-      }};
-    }
+  .name {
+    grid-area: N;
+    text-align: center;
+    font-weight: 600;
   }
-  :focus .extended { opacity: 1; }
-  :not(:focus) .extended { opacity: 0 }
 
   .number {
     grid-area: I;
 
-    box-shadow: 0 1px 4px 0 ${({ theme }) => theme.colors.shaddow};
+    box-shadow: 0 1px 4px 0 ${({ theme }) => theme.colors.shadow};
 
     display: flex;
     justify-content: center;
@@ -72,28 +53,41 @@ export const LineStatusCardContainer = styled.button<ILineStatusCardContainerSty
   }
 
   .status-circle {
-    background: ${({ theme, status }) => {
-    switch(status) {
-      case 'Operação Normal':
-        return theme.colors.success;
-      case 'Paralisada':
-        return theme.colors.danger;
-      case 'Operação Encerrada':
-      case 'Operações Encerradas':
-        return '#A3A3A3';
-      default:
-        return theme.colors.warning;
-    }
-  }};
-
-    margin: 10px;
-
     grid-area: S;
-
+    background: var(--status-color);
+    margin: 10px;
     border-radius: 20px;
     height: 20px;
     width: 20px;
-
-    box-shadow: 0 1px 4px 0 ${({ theme }) => theme.colors.shaddow};
+    box-shadow: 0 1px 4px 0 ${({ theme }) => theme.colors.shadow};
   }
-`;
+
+  .status {
+    grid-area: SD;
+    opacity: var(--status-opacity);
+    text-align: center;
+    transition: opacity 100ms ease;
+
+    span {
+      font-weight: 800;
+      color: var(--status-color);
+    }
+
+    button {
+      margin-left: 5px;
+      border: none;
+      background: ${({ theme }) => theme.colors.warning};
+      padding: 3px;
+      border-radius: 3px;
+      cursor: pointer;
+      color: ${({ theme }) => theme.colors.warningText};
+    }
+  }
+
+  .details {
+    grid-area: D;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+`

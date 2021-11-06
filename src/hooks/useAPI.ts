@@ -1,29 +1,25 @@
-import { AxiosRequestConfig } from 'axios';
-import useSWR, { ConfigInterface } from 'swr';
-import { fetcherFn } from 'swr/dist/types';
+import { AxiosRequestConfig } from 'axios'
+import useSWR, { SWRConfiguration, SWRResponse } from 'swr'
 
-import { api } from '~/services/api';
+import { api } from '~/services/api'
 
-type SWRConfig<T> = ConfigInterface<T, any, fetcherFn<T>>;
+function useAPI<T extends any = any>(url: string, axiosProps: AxiosRequestConfig, swrProps?: SWRConfiguration): SWRResponse<T, any> {
+  const swr = useSWR<T, any>(
+    url,
+    async (path) => {
+      const response = await api({ ...axiosProps, url: path })
 
-type AxiosProps = Omit<AxiosRequestConfig, 'baseURL'|'url'>;
-type SWRProps<T> = Omit<SWRConfig<T>, 'revalidateOnReconnect'|'errorRetryCount'|'errorRetryInterval'>
+      return response.data as T
+    },
+    {
+      ...swrProps,
+      revalidateOnReconnect: true,
+      errorRetryCount: 5,
+      errorRetryInterval: 300000
+    }
+  )
 
-function useAPI<T>(url: string, axiosProps: AxiosProps, swrProps?: SWRProps<T>) {
-  const { data, error, mutate } = useSWR<T>(url, async (path) => {
-    const response = await api({
-      ...axiosProps,
-      url: path,
-    });
-    return response.data;
-  }, {
-    ...swrProps,
-    revalidateOnReconnect: true,
-    errorRetryCount: 5,
-    errorRetryInterval: 300000,
-  });
-
-  return { data, error, mutate };
+  return swr
 }
 
-export default useAPI;
+export default useAPI

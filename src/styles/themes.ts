@@ -1,8 +1,8 @@
-import { transparentize } from 'polished';
-import { DefaultTheme } from 'styled-components';
+import { transparentize } from 'polished'
+import { DefaultTheme } from 'styled-components'
 
 const colors: DefaultTheme['colors'] = {
-  primary: '#4E148C',
+  primary: '#e9e9e9',
   primaryText: '#FFFFFF',
   secondary: '#613DC1',
   secondaryText: '#FFFFFF',
@@ -12,21 +12,21 @@ const colors: DefaultTheme['colors'] = {
   success: '#3E8914',
   successText: '#FFFFFF',
   warning: '#F5BB00',
-  warningText: '#FFFFFF',
-  danger: '#AD2E24',
-  dangerText: '#FFFFFF',
+  warningText: '#000',
+  error: '#AD2E24',
+  errorText: '#FFFFFF',
 
   background: '#F1F1F1',
   text: '#333333',
-  shaddow: transparentize(0.80, '#000'),
-};
+  shadow: transparentize(0.8, '#000')
+}
 
 const light: DefaultTheme = {
   title: 'light',
 
   colors,
-  toggleTheme: () => {},
-};
+  toggleTheme: () => {}
+}
 
 const dark: DefaultTheme = {
   title: 'dark',
@@ -36,13 +36,10 @@ const dark: DefaultTheme = {
     primary: '#333333',
 
     background: '#222222',
-    text: '#FFFFFF',
+    text: '#FFFFFF'
   },
 
-  toggleTheme: () => {},
-};
+  toggleTheme: () => {}
+}
 
-export {
-  light,
-  dark,
-};
+export { light, dark }

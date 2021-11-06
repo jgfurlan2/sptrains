@@ -1,0 +1,26 @@
+{
+  "name": "SPTrains",
+  "short_name": "SPTrains",
+  "description": "Situação das linhas de metro e trem da cidade de são paulo e região metropolitana",
+  "theme_color": "#613DC1",
+  "background_color": "#F1F1F1",
+  "display": "standalone",
+  "lang": "pt-BR",
+  "scope": "/",
+  "start_url": "/",
+  "icons": [
+    {
+      "src": "assets/favicon.png",
+      "sizes": "64x64 32x32 24x24 16x16",
+      "type": "image/png"
+    }, {
+      "src": "assets/favicon.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    }, {
+      "src": "assets/favicon.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}

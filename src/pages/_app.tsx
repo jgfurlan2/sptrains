@@ -1,19 +1,25 @@
-import { AppProps } from 'next/app';
-import React from 'react';
+import React from 'react'
 
-import { ThemeProvider } from 'styled-components';
+import { AppProps } from 'next/app'
+import { ThemeProvider } from 'styled-components'
 
-import { Header } from '~/components/Header';
+import { CookieConsent } from '~/components/CookieConsent'
+import { Header } from '~/components/Header'
+import { usePersistedState } from '~/hooks'
+import { GlobalStyle } from '~/styles/global'
+import { dark, light } from '~/styles/themes'
 
-import { GlobalStyle } from '~/styles/global';
-import { light } from '~/styles/themes';
+const App: React.FC<AppProps> = ({ Component, pageProps }) => {
+  const [themeType, setThemeType] = usePersistedState('theme', 'light')
 
-const App: React.FC<AppProps> = ({ Component, pageProps }) => (
-  <ThemeProvider theme={light}>
-    <Header />
-    <Component {...pageProps} />
-    <GlobalStyle />
-  </ThemeProvider>
-);
+  return (
+    <ThemeProvider theme={themeType === 'light' ? light : dark}>
+      <Header themeType={themeType} setThemeType={setThemeType} />
+      <Component {...pageProps} />
+      <CookieConsent />
+      <GlobalStyle />
+    </ThemeProvider>
+  )
+}
 
-export default App;
+export default App
