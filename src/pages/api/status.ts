@@ -16,59 +16,30 @@ function fixFormatedDate(date: string): Date {
   }
 }
 
+interface APIStatusLine {
+  DataGeracao: string
+  Descricao?: string
+  LinhaId: number
+  Nome: string
+  Status: string
+  Tipo: 'M'|'C'|'4'|'5'
+}
+
 export default async function handler(req: NextApiRequest, res: NextApiResponse): Promise<void> {
   try {
     const lines: IAPIStatusRequest['lines'] = []
+    const masterResponse = await axios.get<APIStatusLine[]>(process.env.MASTER_REQUEST_URL)
 
-    const cptm = await axios.get<ICPTMResponse[]>(process.env.CPTM_API_URL)
-    const viaQuatro = await axios.get<IViaQuatroMobilidadeResponse>(process.env.VIA_QUATRO_API_URL)
-    const viaMobilidade = await axios.get<IViaQuatroMobilidadeResponse>(process.env.VIA_MOBILIDADE_API_URL)
-
-    if (viaQuatro.data.CurrentLineStatus) {
+    masterResponse.data.map(line => {
       lines.push({
-        id: 4,
-        name: 'AMARELA',
-        operator: '4',
-        status: viaQuatro.data.CurrentLineStatus.Status,
-        details: viaQuatro.data.CurrentLineStatus.FinalDescription,
-        updatedAt: fixFormatedDate(viaQuatro.data.CurrentLineStatus.DateUpdateFormated)
+        id: line.LinhaId,
+        name: line.Nome,
+        operator: line.Tipo,
+        status: line.Status,
+        details: line.Descricao,
+        updatedAt: fixFormatedDate(line.DataGeracao)
       })
-    }
-
-    if (viaMobilidade.data.CurrentLineStatus) {
-      lines.push({
-        id: 5,
-        name: 'LILÁS',
-        operator: '5',
-        status: viaMobilidade.data.CurrentLineStatus.Status,
-        details: viaMobilidade.data.CurrentLineStatus.FinalDescription,
-        updatedAt: fixFormatedDate(viaMobilidade.data.CurrentLineStatus.DateUpdateFormated)
-      })
-
-      for (const metroLine of viaMobilidade.data.StatusMetro.ListLineStatus) {
-        lines.push({
-          id: parseInt(metroLine.Id, 10),
-          name: metroLine.Line.replace(`Linha ${metroLine.Id} - `, '').toUpperCase(),
-          operator: 'M',
-          status: metroLine.StatusMetro,
-          details: metroLine.Description,
-          updatedAt: fixFormatedDate(viaMobilidade.data.StatusMetro.DateUpdateMetro)
-        })
-      }
-    }
-
-    for (const cptmLine of cptm.data) {
-      if (!lines.map((l) => l.id).includes(cptmLine.LinhaId) && cptmLine.Tipo === 'C') {
-        lines.push({
-          id: cptmLine.LinhaId,
-          name: cptmLine.Nome,
-          operator: 'C',
-          status: cptmLine.Status,
-          details: cptmLine.Descricao,
-          updatedAt: new Date(cptmLine.DataGeracao)
-        })
-      }
-    }
+    })
 
     return res.status(200).json({ lines: lines.sort((a, b) => a.id - b.id) })
   } catch (err) {
